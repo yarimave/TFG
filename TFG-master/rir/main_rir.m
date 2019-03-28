@@ -100,7 +100,7 @@ az = conv(ls1(:,4),sm);
 
 %%
 %Decoder
-Amb = [aw ax ay az];
+Amb = [aw ay az ax];
 matrix = Amb*DM;
 
 %%
