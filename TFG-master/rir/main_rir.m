@@ -24,76 +24,76 @@ a7 = audioread('E-35_A45.wav');
 a8 = audioread('E-35_A-45.wav'); 
 
 %RIR recordings
-ls1 = audioread('ls1.wav'); %E3.44 A90
-ls2 = audioread('ls2.wav'); %E65.89 A60
-ls3 = audioread('ls3.wav'); %E3.44 A60
-ls4 = audioread('ls4.wav'); %E65.89 A120
-ls5 = audioread('ls5.wav'); %E3.44 A120
-ls6 = audioread('ls6.wav'); %E65.89 A90
-ls7 = audioread('ls7.wav'); %E3.44 A-160
-ls8 = audioread('ls8.wav'); %E65.89 A-20
-ls9 = audioread('ls9.wav'); %E65.89 A-160
-ls10 = audioread('ls10.wav'); %E.3.44 A-20
+ls1 = audioread('ls1.wav'); %E3.44 A90 --> E0 A0
+ls2 = audioread('ls2.wav'); %E65.89 A60 --> E62.45 A-30
+ls3 = audioread('ls3.wav'); %E3.44 A60 -->E0 A-30
+ls4 = audioread('ls4.wav'); %E65.89 A120 -->E62.89 A30
+ls5 = audioread('ls5.wav'); %E3.44 A120 -->E0 A30
+ls6 = audioread('ls6.wav'); %E65.89 A90 -->E62.45 A0
+ls7 = audioread('ls7.wav'); %E3.44 A-160 -->E0 A110
+ls8 = audioread('ls8.wav'); %E65.89 A-20 -->E62.45 -110
+ls9 = audioread('ls9.wav'); %E65.89 A-160 -->E62.45 A110
+ls10 = audioread('ls10.wav'); %E.3.44 A-20 --> E0 A-110
 
 %%
 %Convolve sound with rir
 
 %ls1
-aw = conv(ls1(:,1),sm);
-ax = conv(ls1(:,2),sm);
-ay = conv(ls1(:,3),sm);
-az = conv(ls1(:,4),sm);
+% aw = conv((ls1(:,1))/sqrt(2),sm);
+% ax = conv(ls1(:,2),sm);
+% ay = conv(ls1(:,3),sm);
+% az = conv(ls1(:,4),sm);
 
 % %ls2
-% aw = conv(ls2(:,1),sm);
+% aw = conv((ls2(:,1))/sqrt(2),sm);
 % ax = conv(ls2(:,2),sm);
 % ay = conv(ls2(:,3),sm);
 % az = conv(ls2(:,4),sm);
 %
 % %ls3
-% aw = conv(ls3(:,1),sm);
+% aw = conv((ls3(:,1))/sqrt(2),sm);
 % ax = conv(ls3(:,2),sm);
 % ay = conv(ls3(:,3),sm);
 % az = conv(ls3(:,4),sm);
 % 
 % %ls4
-% aw = conv(ls4(:,1),sm);
+% aw = conv((ls4(:,1))/sqrt(2),sm);
 % ax = conv(ls4(:,2),sm);
 % ay = conv(ls4(:,3),sm);
 % az = conv(ls4(:,4),sm);
 % 
 % %ls5
-% aw = conv(ls5(:,1),sm);
+% aw = conv((ls5(:,1))/sqrt(2),sm);
 % ax = conv(ls5(:,2),sm);
 % ay = conv(ls5(:,3),sm);
 % az = conv(ls5(:,4),sm);
 % 
 % %ls6
-% aw = conv(ls6(:,1),sm);
+% aw = conv((ls6(:,1))/sqrt(2),sm);
 % ax = conv(ls6(:,2),sm);
 % ay = conv(ls6(:,3),sm);
 % az = conv(ls6(:,4),sm);
 % 
 % %ls7
-% aw = conv(ls7(:,1),sm);
-% ax = conv(ls7(:,2),sm);
-% ay = conv(ls7(:,3),sm);
-% az = conv(ls7(:,4),sm);
+aw = conv((ls7(:,1))/sqrt(2),sm);
+ax = conv(ls7(:,2),sm);
+ay = conv(ls7(:,3),sm);
+az = conv(ls7(:,4),sm);
 % 
 % %ls8
-% aw = conv(ls8(:,1),sm);
+% aw = conv((ls8(:,1))/sqrt(2),sm);
 % ax = conv(ls8(:,2),sm);
 % ay = conv(ls8(:,3),sm);
 % az = conv(ls8(:,4),sm);
 % 
 % %ls9
-% aw = conv(ls9(:,1),sm);
+% aw = conv((ls9(:,1))/sqrt(2),sm);
 % ax = conv(ls9(:,2),sm);
 % ay = conv(ls9(:,3),sm);
 % az = conv(ls9(:,4),sm);
 % 
 % %ls10
-% aw = conv(ls10(:,1),sm);
+% aw = conv((ls10(:,1))/sqrt(2),sm);
 % ax = conv(ls10(:,2),sm);
 % ay = conv(ls10(:,3),sm);
 % az = conv(ls10(:,4),sm);
