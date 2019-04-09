@@ -1,0 +1,1 @@
+Create a python server if you want to upload audio files. You must add python into environments
