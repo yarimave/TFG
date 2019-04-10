@@ -60,7 +60,7 @@ Amb.push(Y);
 Amb.push(Z);
 Amb.push(X);
 
-Amb[0].map((col, i) => array.map(row => row[i]));
+Amb_tr = transpose(Amb);
 
 function loadSound(url){
   var request = new XMLHttpRequest();
@@ -72,4 +72,14 @@ function loadSound(url){
     });
   }
   request.send();
+}
+
+function transpose(matrix){
+  var new_matrix = [];
+  for (var i=0; i<matrix.length; i++){
+    for (var j=0; j<matrix[i].length; j++){
+      new_matrix[j][i] = matrix[i][j];
+    }
+  }
+  return new_matrix;
 }
