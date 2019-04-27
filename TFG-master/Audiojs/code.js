@@ -40,24 +40,24 @@ var saveInThisBuffer = function(buffer){
   audioData = buffer;
 }
 
-loadSound(audioURL, songBuffer);
+loadSound(audioURL, saveInThisBuffer);
 
-loadSound("E35_A45.wav", speakersBuffer[0]);
-loadSound("E35_A-45.wav", speakersBuffer[1]);
-loadSound("E-35_A45.wav", speakersBuffer[2]);
-loadSound("E-35_A-45.wav", speakersBuffer[3]);
-loadSound("E35_A135.wav", speakersBuffer[4]);
-loadSound("E35_A-135.wav", speakersBuffer[5]);
-loadSound("E-35_A135.wav", speakersBuffer[6]);
-loadSound("E-35_A-135.wav", speakersBuffer[7]);
+//loadSound("E35_A45.wav", speakersBuffer[0]);
+//loadSound("E35_A-45.wav", speakersBuffer[1]);
+//loadSound("E-35_A45.wav", speakersBuffer[2]);
+//loadSound("E-35_A-45.wav", speakersBuffer[3]);
+//loadSound("E35_A135.wav", speakersBuffer[4]);
+//loadSound("E35_A-135.wav", speakersBuffer[5]);
+//loadSound("E-35_A135.wav", speakersBuffer[6]);
+//
+//loadSound("E-35_A-135.wav", speakersBuffer[7]);
 
 
-clickme = document.getElementById('clickme');
-clickme.addEventListener('click',clickHandler);
+playbutton = document.getElementById('playbutton');
+playbutton.addEventListener('click',clickHandler);
 function clickHandler(e) {
-    playSound(songBuffer);
+    playSound(audioData);
 }
-
 
 arraySong = songBuffer.getChannelData(0);
 //speaker1 = speakersBuffer.getChannelData(1);
@@ -78,39 +78,31 @@ Amb.push(Y);
 Amb.push(Z);
 Amb.push(X);
 
-Amb_tr = transpose(Amb);
 
-matrix = Amb_tr * decoder;
-matrix_tr = transpose(matrix);
-
-var dimMatrix = dim(matrix);
-for (var i = 0; i < dimMatrix[0]; i++){
-  convolver.buffer = speakersBuffer[i];
-  matrix[i].connect(convolver);
-  convolver.connect(context.destination);
-  convolver.clear();
-}
-
-
-
-function loadSound(url, saveInThisBuffer){
+function loadSound(url, doAfterLoading){
   var request = new XMLHttpRequest();
   request.open('GET',url,true);
   request.responseType = 'arraybuffer';
   request.onload = function(){
-    audioContext.decodeAudioData(request.response, saveInThisBuffer);
+    audioContext.decodeAudioData(request.response, doAfterLoading);
     }
   request.send();
 }
 
+//function playSound(){
+//  source.start(audioContext.currentTime);
+//}
+
+//function stopSound(){
+//  source.stop(audioContext.currentTime);
+//}
+
 function playSound(buffer){
   var source = audioContext.createBufferSource();
   source.buffer = buffer;
-
   source.connect(audioContext.destination);
   source.start(0);
 }
-  
 
 function transpose(matrix){
   var new_matrix = [];
