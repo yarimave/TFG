@@ -9,6 +9,7 @@ var elevation = 0;
 var audioURL = "thecatalyst.wav";
 var speakersBuffer = [];
 var audioData = null;
+var source;
 
 var a = 0.125;
 var b = 0.216495;
@@ -51,13 +52,23 @@ loadSound(audioURL, saveInThisBuffer);
 //loadSound("E-35_A135.wav", speakersBuffer[6]);
 //
 //loadSound("E-35_A-135.wav", speakersBuffer[7]);
+document.getElementById('stopbutton').disabled = true;
 
-
-playbutton = document.getElementById('playbutton');
-playbutton.addEventListener('click',clickHandler);
-function clickHandler(e) {
-    playSound(audioData);
-}
+document.getElementById('playbutton').addEventListener('click', function() {
+  source = audioContext.createBufferSource();
+  source.buffer = audioData;
+  source.connect(audioContext.destination);
+  source.start(0);
+  source.isPlaying = true;
+  document.getElementById('playbutton').disabled = true;
+  document.getElementById('stopbutton').disabled = false;
+  });
+document.getElementById('stopbutton').addEventListener('click', function() {
+  source.stop(0);
+  source.isPlaying = false;
+  document.getElementById('playbutton').disabled = false;
+  document.getElementById('stopbutton').disabled = true;
+});
 
 arraySong = songBuffer.getChannelData(0);
 //speaker1 = speakersBuffer.getChannelData(1);
@@ -97,12 +108,7 @@ function loadSound(url, doAfterLoading){
 //  source.stop(audioContext.currentTime);
 //}
 
-function playSound(buffer){
-  var source = audioContext.createBufferSource();
-  source.buffer = buffer;
-  source.connect(audioContext.destination);
-  source.start(0);
-}
+
 
 function transpose(matrix){
   var new_matrix = [];
