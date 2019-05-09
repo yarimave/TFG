@@ -37,7 +37,7 @@ var saveInThisBuffer = function(buffer){
   audioData = buffer;
 }
 
-//loadSound(audioURL, saveInThisBuffer);
+loadSound(audioURL, saveInThisBuffer);
 
 //songBuffer.buffer = audioData;
 
@@ -96,12 +96,15 @@ for(var i = 0; i < new_matrix.length; i++){
 }
 
 //CONVOLVE
-var dimMatrix = dim(matrix);
-for (var i = 0; i < dimMatrix[0]; i++){
-  convolver.buffer = speakersBuffer[i];
-  matrix[i].connect(convolver);
-  convolver.connect(context.destination);
-  convolver.clear();
+var impulse;
+var impulses = new Array(number_HRTF);
+for (var i = 0; i < number_HRTF; i++){
+  impulse = base64ToArrayBuffer(speakersBuffer[i]);
+  audioContext.decodeAudioData(impulse, function(buffer){
+    //convolved es un buffer que tendra todas las convoluciones
+    convolved.buffer = buffer;
+  })
+ 
 }
 
 

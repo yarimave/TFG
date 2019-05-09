@@ -51,18 +51,24 @@ loadSound("E35_A4548.wav", speakersBuffer);
 
 setTimeout(function(){
 
-  arraySong = audioData.getChannelData(0);
-  speakerir = speaker.getChannelData(0);
+  //arraySong = audioData.getChannelData(0);
+  //speakerir = speaker.getChannelData(0);
 
-  output = conv(arraySong,speakerir);
+  //output = conv(arraySong,speakerir);
+  var delta = new Array(5);
+  delta[0] = 1;
+  for (var i = 1; i < delta.length; i++){
+    delta[i] = 0;
+  }
 
   var convolver = audioContext.createConvolver();
   convolver.buffer = speaker;
   var songSource = audioContext.createBufferSource();
   songSource.buffer = audioData;
+  var gainNode = audioContext.createGain();
   
-  var output = audioContext.createAnalyser();
-  songSource.connect(convolver).connect(output);
+  
+  songSource.connect(convolver).connect(gainNode);
 },2000);
 
 
