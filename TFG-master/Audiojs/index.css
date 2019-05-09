@@ -1,0 +1,19 @@
+body {
+    text-align: center;
+    margin: 1em;
+    padding: 0;
+    color: #000;
+    background-color: rgb(240, 240, 240);
+}
+#playbutton{
+  max-width: 50px;
+  max-height: 50px;
+}
+#stopbutton{
+  max-width: 50px;
+  max-height: 50px;
+}
+#sample_no{
+  width: 90px;
+  color: black;
+}
