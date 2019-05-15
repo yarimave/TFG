@@ -3,14 +3,15 @@ window.AudioContext = (function(){
 })();
 
 var audioContext = new AudioContext();
-var audioURL = "thecatalyst.wav";
+var sampleRate = audioContext.sampleRate;
+
 var audioData;
 var speakersBuffer= [];
 var speaker;
 var source;
 var gainVolume = audioContext.createGain();
 
-var azimuth = (Math.pi)/2;
+var azimuth = (Math.PI)/2;
 var elevation = 0;
 
 var a = 0.125;
@@ -33,7 +34,11 @@ var saveHRTF = function(buffer){
   speaker = [];
 }
 
-loadSound(audioURL, saveSong);
+if (sampleRate == 44100) var audioURL = "44folder/";
+//ARREGLAR ESTOOOOOOOOOO!!!!!
+					else if (sampleRate == 48000) var audioURL = "44folder/"
+
+loadSound(audioURL.concat("thecatalyst.wav"), saveSong);
 loadSound("E35_A135.wav", saveHRTF);
 loadSound("E35_A-135.wav", saveHRTF);
 loadSound("E-35_A135.wav", saveHRTF);
@@ -48,7 +53,8 @@ setTimeout(function(){
   
   Ambisonics = new Array(4);
   Ambisonics = encode(arraySong, azimuth, elevation, "sn3d");
-},2000);
+
+},500);
 
 document.getElementById('sample_no').addEventListener('change', function(){
   var x = document.getElementById('sample_no');
@@ -114,6 +120,7 @@ function encode(arrayAudio, azimuth, elevation, format){
     Amb.push(Z);
     Amb.push(X);
   }
+  return Amb;
 }
 
 function divide(vector, scalar){
