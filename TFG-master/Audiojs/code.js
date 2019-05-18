@@ -6,7 +6,7 @@ window.AudioContext = (function(){
 var azimuth = (Math.PI)/2;
 var elevation = 0;
 
-var audioURL = "thecatalyst48.wav";
+var audioURL = "thecatalyst.wav";
 var speakersBuffer = [];
 var audioData = null;
 var speaker;
@@ -47,7 +47,7 @@ var speakersBuffer = function(buffer){
 
 loadSound(audioURL, songBuffer);
 
-loadSound("E35_A4548.wav", speakersBuffer);
+loadSound("E35_A45.wav", speakersBuffer);
 
 setTimeout(function(){
 
@@ -61,14 +61,68 @@ setTimeout(function(){
     delta[i] = 0;
   }
 
-  var convolver = audioContext.createConvolver();
-  convolver.buffer = speaker;
-  var songSource = audioContext.createBufferSource();
-  songSource.buffer = audioData;
-  var gainNode = audioContext.createGain();
-  
-  
-  songSource.connect(convolver).connect(gainNode);
+
+
+  document.getElementById('playbutton').addEventListener('click', function() {
+    var songSource = audioContext.createBufferSource();
+    songSource.buffer = audioData;
+
+    var pannerL = audioContext.createStereoPanner();
+    pannerL.pan.setValueAtTime(-1, audioContext.currentTime);
+
+  hrtfL = speaker.getChannelData(0);
+  hrtfR = speaker.getChannelData(1);
+
+
+  var convolverR = audioContext.createConvolver();
+
+  //var hrtfLB = audioContext.createBuffer(1, hrtfL.length, 48000);
+  //var hrtfRB = audioContext.createBuffer(1, hrtfR.length, 48000);
+  //var hrtfRBsource = audioContext.createBufferSource();
+  //hrtfLB.buffer = hrtfL;
+  //hrtfRB.buffer = hrtfR;
+  //hrtfRBsource.buffer = hrtfRB;
+  //convolverL.buffer = hrtfLB;
+  //convolverR.buffer = hrtfRBsource.buffer;
+
+    var gainL = audioContext.createGain();
+    var gainR = audioContext.createGain();
+
+    gainL.gain.value = 10;
+    gainR.gain.value = 1;
+    //songSource.connect(gainL);
+    //gainL.connect(audioContext.destination);
+
+    var delta = audioContext.createBuffer(1, 256, 48000);
+    d = delta.getChannelData(0);
+    for (var i=0; i < 256; i++)
+    {
+      if (i==0) {
+        d[i] = 1;
+      } else {
+        d[i]=0;
+      }
+    }
+    //convolverL.buffer = delta;
+
+    var convolverL = audioContext.createConvolver();
+    var hrtfL = audioContext.createBuffer(1, 256, 48000);
+    hrtfL.copyToChannel(speaker.getChannelData(0),0);
+    convolverL.buffer = hrtfL;
+
+    convolverL.normalize = true;
+    songSource.connect(convolverL);
+    convolverL.connect(gainL);
+    gainL.connect(audioContext.destination);
+
+
+    //songSource.connect(audioContext.destination);
+    //convolverL.connect(audioContext.destination);
+    //pannerL.connect(audioContext.destination);
+    //songSource.connect(audioContext.destination);
+    songSource.start(0);
+    });
+
 },2000);
 
 
@@ -85,21 +139,21 @@ setTimeout(function(){
 
 document.getElementById('stopbutton').disabled = true;
 
-document.getElementById('playbutton').addEventListener('click', function() {
-  source = audioContext.createBufferSource();
-  source.buffer = audioData;
-  source.connect(audioContext.destination);
-  source.start(0);
-  source.isPlaying = true;
-  document.getElementById('playbutton').disabled = true;
-  document.getElementById('stopbutton').disabled = false;
-  });
-document.getElementById('stopbutton').addEventListener('click', function() {
-  source.stop(0);
-  source.isPlaying = false;
-  document.getElementById('playbutton').disabled = false;
-  document.getElementById('stopbutton').disabled = true;
-});
+//document.getElementById('playbutton').addEventListener('click', function() {
+  //source = audioContext.createBufferSource();
+  //source.buffer = audioData;
+  //source.connect(audioContext.destination);
+  //source.start(0);
+  //source.isPlaying = true;
+  //document.getElementById('playbutton').disabled = true;
+  //document.getElementById('stopbutton').disabled = false;
+  //});
+//document.getElementById('stopbutton').addEventListener('click', function() {
+  //source.stop(0);
+  //source.isPlaying = false;
+  //document.getElementById('playbutton').disabled = false;
+  //document.getElementById('stopbutton').disabled = true;
+//});
 
 
 

@@ -3,13 +3,15 @@ window.AudioContext = (function(){
 })();
 
 var audioContext = new AudioContext();
-var audioURL = "thecatalyst.wav";
+var sampleRate = audioContext.sampleRate;
+
 var audioData;
 var speakersBuffer= [];
 var speaker;
 var source;
+var gainVolume = audioContext.createGain();
 
-var azimuth = (Math.pi)/2;
+var azimuth = (Math.PI)/2;
 var elevation = 0;
 
 var a = 0.125;
@@ -32,7 +34,11 @@ var saveHRTF = function(buffer){
   speaker = [];
 }
 
-loadSound(audioURL, saveSong);
+if (sampleRate == 44100) var audioURL = "44folder/";
+//ARREGLAR ESTOOOOOOOOOO!!!!!
+					else if (sampleRate == 48000) var audioURL = "44folder/"
+
+loadSound(audioURL.concat("thecatalyst.wav"), saveSong);
 loadSound("E35_A135.wav", saveHRTF);
 loadSound("E35_A-135.wav", saveHRTF);
 loadSound("E-35_A135.wav", saveHRTF);
@@ -47,7 +53,8 @@ setTimeout(function(){
   
   Ambisonics = new Array(4);
   Ambisonics = encode(arraySong, azimuth, elevation, "sn3d");
-},2000);
+
+},500);
 
 document.getElementById('sample_no').addEventListener('change', function(){
   var x = document.getElementById('sample_no');
@@ -59,11 +66,15 @@ document.getElementById('stopbutton').disabled = true;
 document.getElementById('playbutton').addEventListener('click', function() {
   source = audioContext.createBufferSource();
   source.buffer = audioData;
+  var dur = (source.buffer.duration)*1000;
   source.connect(audioContext.destination);
-  source.start(0);
-  source.isPlaying = true;
+  source.start(0);  
   document.getElementById('playbutton').disabled = true;
   document.getElementById('stopbutton').disabled = false;
+  setTimeout(function(){
+    document.getElementById('playbutton').disabled = false;
+    document.getElementById('stopbutton').disabled = true;
+  },dur);
   });
 document.getElementById('stopbutton').addEventListener('click', function() {
   source.stop(0);
@@ -71,7 +82,11 @@ document.getElementById('stopbutton').addEventListener('click', function() {
   document.getElementById('playbutton').disabled = false;
   document.getElementById('stopbutton').disabled = true;
 });
-
+document.getElementById('volume-slider').addEventListener('click', function(){
+  var v = document.getElementById('volume-slider');
+  gainVolume.gain.setValueAtTime(v.value, audioContext.currentTime);
+  gainVolume.connect(audioContext.destination);
+});
 
 function loadSound(url, doAfterLoading){
   var request = new XMLHttpRequest();
@@ -105,6 +120,7 @@ function encode(arrayAudio, azimuth, elevation, format){
     Amb.push(Z);
     Amb.push(X);
   }
+  return Amb;
 }
 
 function divide(vector, scalar){
