@@ -16,7 +16,6 @@ var elevation = 0;
 
 var saveSong = function(buffer){
   audioData = buffer;
-  arraySong = audioData.getChannelData(0);
 }
 
 var hrtfL = audioContext.createBuffer(8, 256, audioContext.sampleRate);
@@ -60,6 +59,7 @@ loadSound(audioURL.concat("sadie/E-35_A-45.wav"), saveHRTF);
 
 
 setTimeout(function(){
+  var arraySong = audioData.getChannelData(0);
   
   var decodedbuffer = audioContext.createBuffer(8, arraySong.length, sampleRate);
   decodedbuffer = returnDec(arraySong, azimuth,elevation);
@@ -90,13 +90,36 @@ setTimeout(function(){
   //Creating splitters
   var splitter = audioContext.createChannelSplitter(8);
 
+  //Creating gainVolumes
+  var gainVolume = audioContext.createGain();
+  gainVolume.gain = 1;
+
   //EVENT LISTENERS
+  //CHANGE audio file
   document.getElementById('sample_no').addEventListener('change', function(){
   var x = document.getElementById('sample_no');
   loadSound(x.value.toString(),saveSong);
-  decodedbuffer = returnDec(arraySong, azimuth, elevation);
+  setTimeout(function(){
+    arraySong = audioData.getChannelData(0);
+    decodedbuffer = returnDec(arraySong, azimuth, elevation);
+  },700);  
   })
 
+  //CHANGE azimuth anechoic
+  document.getElementById('a_anechoic').addEventListener('change', function(){
+    var a = (document.getElementById('a_anechoic'));
+    azimuth = parseFloat(a.value);
+    decodedbuffer = returnDec(arraySong, azimuth, elevation);
+  })
+  //CHANGE elevation anechoic
+  document.getElementById('a_anechoic').addEventListener('change', function(){
+    var e = (document.getElementById('a_anechoic'));
+    elevation = parseFloat(e.value);    
+    decodedbuffer = returnDec(arraySong, azimuth, elevation);
+  })
+
+
+  //PLAY button
   document.getElementById('stopbutton').disabled = true;
   document.getElementById('playbutton').addEventListener('click', function() {
     //From AudioBuffer to AudioBufferSource
@@ -121,9 +144,11 @@ setTimeout(function(){
 
     mergerL.connect(pannerL);
     mergerR.connect(pannerR);
+    
+    pannerL.connect(gainVolume);
+    pannerR.connect(gainVolume);
 
-    pannerL.connect(audioContext.destination);
-    pannerR.connect(audioContext.destination);
+    gainVolume.connect(audioContext.destination);
     //Ensuring all connections are prepared
     setTimeout(function(){
       songSource.start();
@@ -136,21 +161,20 @@ setTimeout(function(){
       document.getElementById('stopbutton').disabled = true;
     },dur);
    
-    //STOP
+    //STOP button
     document.getElementById('stopbutton').addEventListener('click', function() {
       songSource.stop(0);
       songSource.isPlaying = false;
       document.getElementById('playbutton').disabled = false;
       document.getElementById('stopbutton').disabled = true;
     });
-});  
-  document.getElementById('volume-slider').addEventListener('click', function(){
-    var v = document.getElementById('volume-slider');
-    gainVolume.gain.setValueAtTime(v.value, audioContext.currentTime);
-    gainVolume.connect(audioContext.destination);
-  });
+    //VOLUME
+    document.getElementById('volume-slider').addEventListener('click', function(){
+      var v = document.getElementById('volume-slider');
+      gainVolume.gain.setValueAtTime(v.value, audioContext.currentTime);
+    });
+  });  
 },700);
-
 
 
 function loadSound(url, doAfterLoading){
@@ -261,7 +285,7 @@ function returnDec (audio, azimuth, elevation){
   ];
   //Encoding
   Ambisonics = new Float32Array(4);
-  Ambisonics = encode(arraySong, azimuth, elevation, "sn3d");
+  Ambisonics = encode(audio, azimuth, elevation, "sn3d");
   Ambisonics = transpose(Ambisonics);
   decodedBeforeTr = multiplyMatrix(Ambisonics, decoder);
   //Result decoder
