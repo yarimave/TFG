@@ -3,8 +3,8 @@ window.AudioContext = (function(){
 })();
 
 
-var azimuth = Math.PI/2;
-//var azimuth = (Math.PI)/2;
+//var azimuth = 0;
+var azimuth = (Math.PI)/2;
 //var azimuth = (Math.PI)/-2;
 var elevation = 0;
 

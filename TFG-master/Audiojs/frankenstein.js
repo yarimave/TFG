@@ -5,14 +5,22 @@ window.AudioContext = (function(){
 var audioContext = new AudioContext();
 var sampleRate = audioContext.sampleRate;
 
+//audioContext.destination.channelCount = 1;
+// https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html#UpMix
 var audioData;
 var speakersBuffer= [];
 var speaker;
+var rir;
 var source;
 var gainVolume = audioContext.createGain();
 
 var azimuth = (Math.PI)/2;
+//var azimuth = (Math.PI)/2;
+//var azimuth = 0;
+//var azimuth = (Math.PI)/-4;
 var elevation = 0;
+
+var mode = "a";
 
 var saveSong = function(buffer){
   audioData = buffer;
@@ -29,9 +37,13 @@ var saveHRTF = function(buffer){
   speaker = [];
 }
 
+var saveRIR = function(buffer){
+  rir = buffer;
+}
+
 if (sampleRate == 44100) var audioURL = "/44folder/";
 //ARREGLAR ESTOOOOOOOOOO!!!!!
-					else if (sampleRate == 48000) var audioURL = "/48folder/"
+					else if (sampleRate == 48000) var audioURL = "/48folder/";
 
 loadSound(audioURL.concat("thecatalyst.wav"), saveSong);
 loadSound(audioURL.concat("sadie/E35_A135.wav"), saveHRTF);
@@ -57,6 +69,8 @@ setTimeout(function(){
 loadSound(audioURL.concat("sadie/E-35_A-45.wav"), saveHRTF);
 },700);
 
+loadSound("ls1.wav", saveRIR);
+
 
 setTimeout(function(){
   var arraySong = audioData.getChannelData(0);
@@ -66,10 +80,12 @@ setTimeout(function(){
 
   var convolverLarray = [];
   var convolverRarray = [];
+  var pannerLarray = [];
+  var pannerRarray = [];
 
   //Creating panners
-  var pannerL = audioContext.createStereoPanner(); var pannerR = audioContext.createStereoPanner();
-  pannerL.pan.setValueAtTime(-1, audioContext.currentTime); pannerR.pan.setValueAtTime(1, audioContext.currentTime);
+  //var pannerL = audioContext.createStereoPanner(); var pannerR = audioContext.createStereoPanner();
+  //pannerL.pan.setValueAtTime(-1, audioContext.currentTime); pannerR.pan.setValueAtTime(1, audioContext.currentTime);
 
   //Filling convolver buffers
   for (var c=0; c<8; c++){
@@ -78,17 +94,35 @@ setTimeout(function(){
     hrtfRbuffer.copyToChannel(hrtfR.getChannelData(c),0);
 
     var convolverL = audioContext.createConvolver(); var convolverR = audioContext.createConvolver();
+    convolverL.normalize = false; convolverR.normalize = false;
+    //convolverL.channelCountMode = 'max'; convolverR.channelCountMode = 'max';
+    convolverL.channelInterpretation = 'discrete'; convolverR.channelInterpretation = 'discrete';
     convolverL.buffer = hrtfLbuffer; convolverR.buffer = hrtfRbuffer;
     convolverLarray.push(convolverL);
     convolverRarray.push(convolverR);
+
+    var pannerL = audioContext.createStereoPanner(); var pannerR = audioContext.createStereoPanner();
+    //pannerL.channelCountMode = 'max'; pannerR.channelCountMode = 'max';
+    pannerL.channelInterpretation = 'discrete'; pannerR.channelInterpretation = 'discrete';
+    pannerL.pan.setValueAtTime(-1, audioContext.currentTime); pannerR.pan.setValueAtTime(1, audioContext.currentTime);
+
+
+    pannerLarray.push(pannerL);
+    pannerRarray.push(pannerR);
+  
   }
 
   //Creating mergers
-  var mergerL = audioContext.createChannelMerger(2);
-  var mergerR = audioContext.createChannelMerger(2);
+  var mergerL = audioContext.createChannelMerger(8);
+  var mergerR = audioContext.createChannelMerger(8);
+
+  //mergerL.channelCountMode = 'clamped-max'; mergerR.channelCountMode = 'clamped-max';
+  mergerL.channelInterpretation = 'discrete'; mergerR.channelInterpretation = 'discrete';
 
   //Creating splitters
   var splitter = audioContext.createChannelSplitter(8);
+  //splitter.channelCountMode = 'max';
+  splitter.channelInterpretation = 'discrete';
 
   //Creating gainVolumes
   var gainVolume = audioContext.createGain();
@@ -112,47 +146,78 @@ setTimeout(function(){
     decodedbuffer = returnDec(arraySong, azimuth, elevation);
   })
   //CHANGE elevation anechoic
-  document.getElementById('a_anechoic').addEventListener('change', function(){
-    var e = (document.getElementById('a_anechoic'));
+  document.getElementById('e_anechoic').addEventListener('change', function(){
+    var e = (document.getElementById('e_anechoic'));
     elevation = parseFloat(e.value);    
     decodedbuffer = returnDec(arraySong, azimuth, elevation);
   })
 
+  //CHANGE mode
+  document.getElementById('anechoic').disabled = true;  
+  document.getElementById('anechoic').addEventListener('click',function(){
+    mode = "a";
+    document.getElementById('anechoic').disabled = true;
+    document.getElementById('reverberant').disabled = false;
+  })
+
+  document.getElementById('reverberant').addEventListener('click',function(){
+    mode = "r";
+    document.getElementById('anechoic').disabled = false;
+    document.getElementById('reverberant').disabled = true;
+  })
 
   //PLAY button
   document.getElementById('stopbutton').disabled = true;
   document.getElementById('playbutton').addEventListener('click', function() {
-    //From AudioBuffer to AudioBufferSource
+     
     var songSource = audioContext.createBufferSource();
-    songSource.buffer = decodedbuffer;
-    songSource.channelInterpretation = "discrete";
-  
-    var dur = (songSource.buffer.duration)*1000;
-  
-    songSource.connect(splitter);
-  
-    for(con = 0; con<8; con++){
-      splitter.connect(convolverLarray[con],con);
-      splitter.connect(convolverRarray[con],con);
-    }
 
-    //Each convolver connected to its merger
-    for (var merg = 0; merg<8; merg++){
-      convolverLarray[merg].connect(mergerL);
-      convolverRarray[merg].connect(mergerR);
-    }
+    if (mode == "a"){
+      //From AudioBuffer to AudioBufferSource
+      songSource.buffer = decodedbuffer;
+      songSource.channelInterpretation = 'discrete';
+  
+      var dur = (songSource.buffer.duration)*1000;
+  
+      songSource.connect(splitter);
+  
+      for(con = 0; con<8; con++){
+        splitter.connect(convolverLarray[con],con);
+        splitter.connect(convolverRarray[con],con);
+      }
 
-    mergerL.connect(pannerL);
-    mergerR.connect(pannerR);
+      //Each convolver connected to its merger
+      for (var merg = 0; merg<8; merg++){
+        convolverLarray[merg].connect(mergerL);
+        convolverRarray[merg].connect(mergerR);
+      }
     
-    pannerL.connect(gainVolume);
-    pannerR.connect(gainVolume);
+      mergerL.connect(pannerL);
+      mergerR.connect(pannerR);
+    
+      pannerL.connect(audioContext.destination);
+      pannerR.connect(audioContext.destination);
 
-    gainVolume.connect(audioContext.destination);
-    //Ensuring all connections are prepared
-    setTimeout(function(){
-      songSource.start();
-    },500);
+      //gainVolume.connect(audioContext.destination);
+      //Ensuring all connections are prepared
+      setTimeout(function(){
+        songSource.start();
+      },500);
+    } else if(mode == "r"){
+      
+      songSource.buffer = audioData;
+      songSource.channelInterpretation = "discrete";
+
+      var convolverRIR = audioContext.createConvolver();
+      convolverRIR.normalize = "false";
+      convolverRIR.channelInterpretation = "discrete";
+      convolverRIR.buffer = rir;
+
+      var norm = audioContext.createGain();
+      norm.channelInterpretation = "discrete";
+      norm.gain.value = 0.7071067;
+      
+    }
     //Disabling some buttons for no multiplaying
     document.getElementById('playbutton').disabled = true;
     document.getElementById('stopbutton').disabled = false;
@@ -173,7 +238,7 @@ setTimeout(function(){
       var v = document.getElementById('volume-slider');
       gainVolume.gain.setValueAtTime(v.value, audioContext.currentTime);
     });
-  });  
+ });  
 },700);
 
 

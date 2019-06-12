@@ -3,7 +3,7 @@ body {
     margin: 1em;
     padding: 0;
     color: #000;
-    background-color: rgb(240, 240, 240);
+    background-color: white;
 }
 #playbutton{
   max-width: 50px;
