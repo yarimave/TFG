@@ -162,8 +162,8 @@ setTimeout(function(){
       norm.gain.value = 0.7071067;
       decNorm.push(norm);
 
-      var summ = audioContext.createChannelMerger(8);
-      summ.channelInterpretation = 'discete';
+      var summ = audioContext.createChannelMerger(4);
+      summ.channelInterpretation = 'discrete';
       sumArray.push(summ);
     }
     
@@ -228,43 +228,12 @@ setTimeout(function(){
   document.getElementById('playbutton').addEventListener('click', function() {
      
     var songSource = audioContext.createBufferSource();
-
-    if (mode == "a"){
-      //From AudioBuffer to AudioBufferSource
-      songSource.buffer = decodedbuffer;
-      songSource.channelInterpretation = 'discrete';
-  
-      var dur = (songSource.buffer.duration)*1000;
-  
-      songSource.connect(splitter);
-  
-      for(con = 0; con<8; con++){
-        splitter.connect(convolverLarray[con],con);
-        splitter.connect(convolverRarray[con],con);
-      }
-
-      //Each convolver connected to its merger
-      for (var merg = 0; merg<8; merg++){
-        convolverLarray[merg].connect(mergerL);
-        convolverRarray[merg].connect(mergerR);
-      }
-    
-      mergerL.connect(pannerL);
-      mergerR.connect(pannerR);
-    
-      pannerL.connect(audioContext.destination);
-      pannerR.connect(audioContext.destination);
-
-      //gainVolume.connect(audioContext.destination);
-      //Ensuring all connections are prepared
-      setTimeout(function(){
-        songSource.start();
-      },500);
-    } else if(mode == "r"){
+    if(mode == "r"){
       
       songSource.buffer = audioData;
       songSource.channelInterpretation = 'discrete';
-
+      var dur = (songSource.buffer.duration)*1000;
+      
       var convolverRIR = audioContext.createConvolver();
       convolverRIR.normalize = 'false';
       convolverRIR.channelInterpretation = 'discrete';
@@ -272,16 +241,17 @@ setTimeout(function(){
 
 
       var splitterRIR = audioContext.createChannelSplitter(4);
+      splitterRIR.channelInterpretation = 'discrete';
 
       songSource.connect(convolverRIR);
       convolverRIR.connect(splitterRIR);
 
       for (var gains = 0; gains<8; gains++){
-        splitter.connect(decNorm[gains],0);
+        splitterRIR.connect(decNorm[gains],0);
         decNorm[gains].connect(decArrayA[gains]);
-        splitter.connect(decArrayB[gains],1);
-        splitter.connect(decArrayC[gains],2);
-        splitter.connect(decArrayD[gains],3);
+        splitterRIR.connect(decArrayB[gains],2);
+        splitterRIR.connect(decArrayC[gains],3);
+        splitterRIR.connect(decArrayD[gains],1);
       }
 
       for (var su = 0; su<8; su++){
@@ -290,8 +260,45 @@ setTimeout(function(){
         decArrayC[su].connect(sumArray[su]);
         decArrayD[su].connect(sumArray[su]);
       }
+
+      for(conv = 0; conv<8; conv++){
+        sumArray[conv].connect(convolverLarray[conv]);
+        sumArray[conv].connect(convolverRarray[conv]);
+      }
+    } else if (mode == "a"){
+      //From AudioBuffer to AudioBufferSource
+      songSource.buffer = decodedbuffer;
+      songSource.channelInterpretation = 'discrete';
+  
+      var dur = (songSource.buffer.duration)*1000;
+  
+      songSource.connect(splitter);
       
+      for(con = 0; con<8; con++){
+        splitter.connect(convolverLarray[con],con);
+        splitter.connect(convolverRarray[con],con);
+      }
     }
+
+    //Each convolver connected to its merger
+    for (var merg = 0; merg<8; merg++){
+      convolverLarray[merg].connect(mergerL);
+      convolverRarray[merg].connect(mergerR);
+    }
+    
+    mergerL.connect(pannerL);
+    mergerR.connect(pannerR);
+    
+    pannerL.connect(audioContext.destination);
+    pannerR.connect(audioContext.destination);
+
+    //gainVolume.connect(audioContext.destination);
+    //Ensuring all connections are prepared
+    setTimeout(function(){
+      songSource.start();
+    },500);
+      
+      
     //Disabling some buttons for no multiplaying
     document.getElementById('playbutton').disabled = true;
     document.getElementById('stopbutton').disabled = false;
