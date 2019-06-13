@@ -106,10 +106,67 @@ setTimeout(function(){
     pannerL.channelInterpretation = 'discrete'; pannerR.channelInterpretation = 'discrete';
     pannerL.pan.setValueAtTime(-1, audioContext.currentTime); pannerR.pan.setValueAtTime(1, audioContext.currentTime);
 
-
     pannerLarray.push(pannerL);
     pannerRarray.push(pannerR);
-  
+    
+    var decArrayA = [];
+    var decArrayB = [];
+    var decArrayC = [];
+    var decArrayD = [];
+    var decNorm = [];
+    var sumArray = [];
+
+    //Creating nodes decoder & normalization & summing
+    var counter = 0;
+    for (var ndec = 0; ndec<8; ndec++){
+      var gainA = audioContext.createGain();
+      gainA.channelInterpretation = 'discrete';
+      gainA.gain.value = 0.125;
+      decArrayA.push(gainA);
+      if (ndec%2 == 0){
+        var gainB = audioContext.createGain();
+        gainB.gain.value = 0.216495;
+        gainB.channelInterpretation = 'discrete';
+      } else{
+        var gainB = audioContext.createGain();
+        gainB.channelInterpretation = 'discrete';
+        gainB.gain.value = -0.216495;
+      }
+      decArrayB.push(gainB);
+      if (ndec>3){
+        var gainD = audioContext.createGain();
+        gainD.channelInterpretation = 'discrete';
+        gainD.gain.value = 0.216495;
+      } else{
+        var gainD = audioContext.createGain();
+        gainD.channelInterpretation = 'discrete';
+        gainD.gain.value = -0.216495;
+      }
+      decArrayD.push(gainD);
+      if (counter==2 || counter==3){
+        var gainC = audioContext.createGain();
+        gainC.channelInterpretation = 'discrete';
+        gainC.gain.value = -0.21653;
+      } else{
+        var gainC = audioContext.createGain();
+        gainC.channelInterpretation = 'discrete';
+        gainC.gain.value = 0.21653;
+      }
+      decArrayC.push(gainC);
+      counter++;
+      if (counter>3){
+        counter = 0;
+      }
+      var norm = audioContext.createGain();
+      norm.channelInterpretation = 'discrete';
+      norm.gain.value = 0.7071067;
+      decNorm.push(norm);
+
+      var summ = audioContext.createChannelMerger(8);
+      summ.channelInterpretation = 'discete';
+      sumArray.push(summ);
+    }
+    
   }
 
   //Creating mergers
@@ -206,16 +263,33 @@ setTimeout(function(){
     } else if(mode == "r"){
       
       songSource.buffer = audioData;
-      songSource.channelInterpretation = "discrete";
+      songSource.channelInterpretation = 'discrete';
 
       var convolverRIR = audioContext.createConvolver();
-      convolverRIR.normalize = "false";
-      convolverRIR.channelInterpretation = "discrete";
+      convolverRIR.normalize = 'false';
+      convolverRIR.channelInterpretation = 'discrete';
       convolverRIR.buffer = rir;
 
-      var norm = audioContext.createGain();
-      norm.channelInterpretation = "discrete";
-      norm.gain.value = 0.7071067;
+
+      var splitterRIR = audioContext.createChannelSplitter(4);
+
+      songSource.connect(convolverRIR);
+      convolverRIR.connect(splitterRIR);
+
+      for (var gains = 0; gains<8; gains++){
+        splitter.connect(decNorm[gains],0);
+        decNorm[gains].connect(decArrayA[gains]);
+        splitter.connect(decArrayB[gains],1);
+        splitter.connect(decArrayC[gains],2);
+        splitter.connect(decArrayD[gains],3);
+      }
+
+      for (var su = 0; su<8; su++){
+        decArrayA[su].connect(sumArray[su]);
+        decArrayB[su].connect(sumArray[su]);
+        decArrayC[su].connect(sumArray[su]);
+        decArrayD[su].connect(sumArray[su]);
+      }
       
     }
     //Disabling some buttons for no multiplaying
