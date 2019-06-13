@@ -14,10 +14,8 @@ var rir;
 var source;
 var gainVolume = audioContext.createGain();
 
-var azimuth = (Math.PI)/2;
-//var azimuth = (Math.PI)/2;
-//var azimuth = 0;
-//var azimuth = (Math.PI)/-4;
+
+var azimuth = 0;
 var elevation = 0;
 
 var mode = "a";
@@ -183,7 +181,8 @@ setTimeout(function(){
 
   //Creating gainVolumes
   var gainVolume = audioContext.createGain();
-  gainVolume.gain = 1;
+  gainVolume.channelInterpretation = 'discrete';
+  //gainVolume.gain.value = 0.1;
 
   //EVENT LISTENERS
   //CHANGE audio file
@@ -289,10 +288,12 @@ setTimeout(function(){
     mergerL.connect(pannerL);
     mergerR.connect(pannerR);
     
-    pannerL.connect(audioContext.destination);
-    pannerR.connect(audioContext.destination);
+    pannerL.connect(gainVolume);
+    pannerR.connect(gainVolume);
+    //pannerL.connect(audioContext.destination);
+    //pannerR.connect(audioContext.destination);
 
-    //gainVolume.connect(audioContext.destination);
+    gainVolume.connect(audioContext.destination);
     //Ensuring all connections are prepared
     setTimeout(function(){
       songSource.start();

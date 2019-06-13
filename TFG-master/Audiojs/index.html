@@ -33,7 +33,7 @@
     <!-- OUTPUT VOLUME -->
     <div id='div-volume'>
       <label for="volume-slider">Volume</label> &nbsp;
-      <input id="volume-slider" type="range" min="0.1" max="10" value="1" step="0.1" />
+      <input id="volume-slider" type="range" min="0.0" max="1" value="0.5" step="0.1" />
     </div>
   </body>
 
@@ -45,23 +45,31 @@
     <button id="reverberant" type="button">Reverberant</button>
   </p>
   <p>
-    Azimuth Elevation || Azimuth Elevation
+    Azimuth Elevation
   </p>
   <p> <!--<span id="rev-value">None</span> &nbsp;-->
      <select id="a_anechoic">
-       <option value=1.57079632>pi/2</option>
-       <option value=-1.57079632>-pi/2</option>
-       <option value=3.14159266>pi</option>
        <option value=0>0</option>
+       <option value=0.78539816>45</option>
+       <option value=1.57079632>90</option>
+       <option value=2.35619449>135</option>
+       <option value=3.14159266>180</option>
+       <option value=-2.35619449>-135</option>
+       <option value=-1.57079632>-90</option>
+       <option value=-0.78539816>-45</option>
+
+
     </select>
     <select id="e_anechoic">
       <option value=0>0</option>
-      <option value=3.14159266/2>pi/2</option>
-      <option value=3.14159266/-2>pi/-2</option>
-      <option value=3.14159266/4>pi/4</option>
+      <option value=0.78539816>45</option>
+      <option value=1.57079632>90</option>
+      <option value=-1.57079632>-90</option>
+      <option value=-0.78539816>-45</option>
     </select>
     </p>
     </div>
+
 
   <script src = "frankenstein.js"></script>
 </html>
