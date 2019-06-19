@@ -67,7 +67,7 @@ setTimeout(function(){
 loadSound(audioURL.concat("sadie/E-35_A-45.wav"), saveHRTF);
 },700);
 
-loadSound("ls1.wav", saveRIR);
+loadSound(audioURL.concat("mainchurch/ls1.wav"), saveRIR);
 
 
 setTimeout(function(){
@@ -81,10 +81,11 @@ setTimeout(function(){
   var pannerLarray = [];
   var pannerRarray = [];
 
-  //Creating panners
-  //var pannerL = audioContext.createStereoPanner(); var pannerR = audioContext.createStereoPanner();
-  //pannerL.pan.setValueAtTime(-1, audioContext.currentTime); pannerR.pan.setValueAtTime(1, audioContext.currentTime);
-
+  var convolverRIR = audioContext.createConvolver();
+  convolverRIR.normalize = false;
+  convolverRIR.channelInterpretation = 'discrete';
+  convolverRIR.buffer = rir;
+    
   //Filling convolver buffers
   for (var c=0; c<8; c++){
     var hrtfLbuffer = audioContext.createBuffer(1, hrtfL.length, sampleRate); var hrtfRbuffer = audioContext.createBuffer(1, hrtfR.length, sampleRate);
@@ -93,20 +94,18 @@ setTimeout(function(){
 
     var convolverL = audioContext.createConvolver(); var convolverR = audioContext.createConvolver();
     convolverL.normalize = false; convolverR.normalize = false;
-    //convolverL.channelCountMode = 'max'; convolverR.channelCountMode = 'max';
     convolverL.channelInterpretation = 'discrete'; convolverR.channelInterpretation = 'discrete';
     convolverL.buffer = hrtfLbuffer; convolverR.buffer = hrtfRbuffer;
     convolverLarray.push(convolverL);
     convolverRarray.push(convolverR);
 
     var pannerL = audioContext.createStereoPanner(); var pannerR = audioContext.createStereoPanner();
-    //pannerL.channelCountMode = 'max'; pannerR.channelCountMode = 'max';
     pannerL.channelInterpretation = 'discrete'; pannerR.channelInterpretation = 'discrete';
     pannerL.pan.setValueAtTime(-1, audioContext.currentTime); pannerR.pan.setValueAtTime(1, audioContext.currentTime);
 
     pannerLarray.push(pannerL);
     pannerRarray.push(pannerR);
-    
+
     var decArrayA = [];
     var decArrayB = [];
     var decArrayC = [];
@@ -171,18 +170,15 @@ setTimeout(function(){
   var mergerL = audioContext.createChannelMerger(8);
   var mergerR = audioContext.createChannelMerger(8);
 
-  //mergerL.channelCountMode = 'clamped-max'; mergerR.channelCountMode = 'clamped-max';
   mergerL.channelInterpretation = 'discrete'; mergerR.channelInterpretation = 'discrete';
 
   //Creating splitters
   var splitter = audioContext.createChannelSplitter(8);
-  //splitter.channelCountMode = 'max';
   splitter.channelInterpretation = 'discrete';
 
   //Creating gainVolumes
   var gainVolume = audioContext.createGain();
   gainVolume.channelInterpretation = 'discrete';
-  //gainVolume.gain.value = 0.1;
 
   //EVENT LISTENERS
   //CHANGE audio file
@@ -209,19 +205,47 @@ setTimeout(function(){
   })
 
   //CHANGE mode
-  document.getElementById('anechoic').disabled = true;  
+  document.getElementById('anechoic').disabled = true;
+  document.getElementById('room_main').disabled = true;
+  document.getElementById('room_old').disabled = true;
+  document.getElementById('room_adbooth').disabled = true;
+  document.getElementById('room_vis').disabled = true;  
   document.getElementById('anechoic').addEventListener('click',function(){
     mode = "a";
     document.getElementById('anechoic').disabled = true;
     document.getElementById('reverberant').disabled = false;
+    document.getElementById('room_main').disabled = true;
+    document.getElementById('room_old').disabled = true;
+    document.getElementById('room_adbooth').disabled = true;
+    document.getElementById('room_vis').disabled = true;
+    document.getElementById('a_anechoic').disabled = false;
+    document.getElementById('e_anechoic').disabled = false;
   })
 
   document.getElementById('reverberant').addEventListener('click',function(){
     mode = "r";
     document.getElementById('anechoic').disabled = false;
     document.getElementById('reverberant').disabled = true;
+    document.getElementById('room_main').disabled = false;
+    document.getElementById('room_old').disabled = false;
+    document.getElementById('room_adbooth').disabled = false;
+    document.getElementById('room_vis').disabled = false;
+    document.getElementById('a_anechoic').disabled = true;
+    document.getElementById('e_anechoic').disabled = true;
   })
 
+  //CHANGE reverb
+  document.getElementById('room_main').addEventListener('change',function(){
+    var roo = (document.getElementById('room_main'));
+    var newstr = roo.value.toString();
+    loadSound(audioURL.concat(newstr), saveRIR);
+    //var convolverRIR = audioContext.createConvolver();
+    //convolverRIR.normalize = false;
+    //convolverRIR.channelInterpretation = 'discrete';
+    setTimeout(function(){
+      convolverRIR.buffer = rir;
+    },200);
+  })
   //PLAY button
   document.getElementById('stopbutton').disabled = true;
   document.getElementById('playbutton').addEventListener('click', function() {
@@ -232,11 +256,6 @@ setTimeout(function(){
       songSource.buffer = audioData;
       songSource.channelInterpretation = 'discrete';
       var dur = (songSource.buffer.duration)*1000;
-      
-      var convolverRIR = audioContext.createConvolver();
-      convolverRIR.normalize = 'false';
-      convolverRIR.channelInterpretation = 'discrete';
-      convolverRIR.buffer = rir;
 
 
       var splitterRIR = audioContext.createChannelSplitter(4);
@@ -290,8 +309,6 @@ setTimeout(function(){
     
     pannerL.connect(gainVolume);
     pannerR.connect(gainVolume);
-    //pannerL.connect(audioContext.destination);
-    //pannerR.connect(audioContext.destination);
 
     gainVolume.connect(audioContext.destination);
     //Ensuring all connections are prepared

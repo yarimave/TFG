@@ -35,19 +35,18 @@
       <label for="volume-slider">Volume</label> &nbsp;
       <input id="volume-slider" type="range" min="0.0" max="1" value="0.5" step="0.1" />
     </div>
-  </body>
 
     <!-- AMBISONICS MODE -->
     <div id='rev-mode'>
     <p>
     Select mode:
-    <button id="anechoic" type="button">Anechoic</button>
-    <button id="reverberant" type="button">Reverberant</button>
-  </p>
-  <p>
-    Azimuth Elevation
-  </p>
-  <p> <!--<span id="rev-value">None</span> &nbsp;-->
+      <button id="anechoic" type="button">Anechoic</button>
+      <button id="reverberant" type="button">Reverberant</button>
+    </p>
+    <p>
+      Azimuth Elevation
+    </p>
+    <p> <!--<span id="rev-value">None</span> &nbsp;-->
      <select id="a_anechoic">
        <option value=0>0</option>
        <option value=0.78539816>45</option>
@@ -57,19 +56,99 @@
        <option value=-2.35619449>-135</option>
        <option value=-1.57079632>-90</option>
        <option value=-0.78539816>-45</option>
+     </select>
 
-
-    </select>
-    <select id="e_anechoic">
-      <option value=0>0</option>
-      <option value=0.78539816>45</option>
-      <option value=1.57079632>90</option>
-      <option value=-1.57079632>-90</option>
-      <option value=-0.78539816>-45</option>
-    </select>
+     <select id="e_anechoic">
+       <option value=0>0</option>
+       <option value=0.78539816>45</option>
+       <option value=1.57079632>90</option>
+       <option value=-1.57079632>-90</option>
+       <option value=-0.78539816>-45</option>
+     </select>
     </p>
     </div>
-
+    <div>
+      <select id="room_main">
+        <option selected disabled>Main Church</option>
+        <option value="mainchurch/ls1.wav">A0 E0</option>
+        <option value="mainchurch/ls2.wav">A-30 E13</option>
+        <option value="mainchurch/ls3.wav">A-30 E0</option>
+        <option value="mainchurch/ls4.wav">A30 E13</option>
+        <option value="mainchurch/ls5.wav">A30 E0</option>
+        <option value="mainchurch/ls6.wav">A0 E13</option>
+        <option value="mainchurch/ls7.wav">A110 E0</option>
+        <option value="mainchurch/ls8.wav">A-110 E13</option>
+        <option value="mainchurch/ls9.wav">A110 E13</option>
+        <option value="mainchurch/ls10.wav">A-110 E0</option>
+      </select>
+      <select id="room_old">
+        <option selected disabled>Old Church</option>
+        <option value="oldchurch/ls1.wav">A90 E-3</option>
+        <option value="oldchurch/ls2.wav">A60 E18</option>
+        <option value="oldchurch/ls3.wav">A60 E-3</option>
+        <option value="oldchurch/ls4.wav">A120 E3</option>
+        <option value="oldchurch/ls5.wav">A120 E-3</option>
+        <option value="oldchurch/ls6.wav">A90 E18</option>
+        <option value="oldchurch/ls7.wav">A-160 E-3</option>
+        <option value="oldchurch/ls8.wav">A-20 E18</option>
+        <option value="oldchurch/ls9.wav">A-160 E18</option>
+        <option value="oldchurch/ls10.wav">A-20 E-3</option>
+      </select>
+      <select id="room_adbooth">
+        <option selected disabled>AudioBooth</option>
+        <option value="audiobooth/ls1.wav">A0 E0</option>
+        <option value="audiobooth/ls2.wav">A-36 E0</option>
+        <option value="audiobooth/ls3.wav">A-72 E0</option>
+        <option value="audiobooth/ls4.wav">A-108 E0</option>
+        <option value="audiobooth/ls5.wav">A-153 E0</option>
+        <option value="audiobooth/ls6.wav">A-207 E0</option>
+        <option value="audiobooth/ls7.wav">A-252 E0</option>
+        <option value="audiobooth/ls8.wav">A72 E0</option>
+        <option value="audiobooth/ls9.wav">A36 E0</option>
+        <option value="audiobooth/ls10.wav">A-36 E48</option>
+        <option value="audiobooth/ls11.wav">A-108 E48</option>
+        <option value="audiobooth/ls12.wav">A-252 E48</option>
+        <option value="audiobooth/ls13.wav">A36 E48</option>
+        <option value="audiobooth/ls14.wav">A36 E-33</option>
+        <option value="audiobooth/ls15.wav">A-108 E-33</option>
+        <option value="audiobooth/ls16.wav">A-252 E-33</option>
+        <option value="audiobooth/ls17.wav">A36 E-33</option>
+      </select>
+      <select id="room_vis">
+        <option selected disabled>Vislab</option>
+        <option value="vislab/ls1.wav">A-90 E0</option>
+        <option value="vislab/ls2.wav">A-60 E0</option>
+        <option value="vislab/ls3.wav">A-30 E0</option>
+        <option value="vislab/ls4.wav">A0 E0</option>
+        <option value="vislab/ls5.wav">A-110 E0</option>
+        <option value="vislab/ls6.wav">A-135 E0</option>
+        <option value="vislab/ls7.wav">A-30 E-37</option>
+        <option value="vislab/ls8.wav">A135 E-37</option>
+        <option value="vislab/ls9.wav">A30 E0</option>
+        <option value="vislab/ls10.wav">A60 E0</option>
+        <option value="vislab/ls11.wav">A90 E0</option>
+        <option value="vislab/ls12.wav">A110 E0</option>
+        <option value="vislab/ls13.wav">A135 E0</option>
+        <option value="vislab/ls14.wav">A180 E0</option>
+        <option value="vislab/ls15.wav">A30 E-37</option>
+        <option value="vislab/ls16.wav">A135 E-37</option>
+        <option value="vislab/ls17.wav">A0 E-37</option>
+        <option value="vislab/ls18.wav">A0 E37</option>
+        <option value="vislab/ls19.wav">A-30 E-37</option>
+        <option value="vislab/ls20.wav">A-45 E-37</option>
+        <option value="vislab/ls21.wav">A-90 E37</option>
+        <option value="vislab/ls22.wav">A-110 E37</option>
+        <option value="vislab/ls23.wav">A-135 E37</option>
+        <option value="vislab/ls24.wav">A0 E90</option>
+        <option value="vislab/ls25.wav">A30 E37</option>
+        <option value="vislab/ls26.wav">A45 E37</option>
+        <option value="vislab/ls27.wav">A90 E37</option>
+        <option value="vislab/ls28.wav">A110 E37</option>
+        <option value="vislab/ls29.wav">A135 E37</option>
+        <option value="vislab/ls30.wav">A180 E37</option>
+      </select>
+    </div>
+    </body>
 
   <script src = "frankenstein.js"></script>
 </html>
