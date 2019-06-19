@@ -40,8 +40,7 @@ var saveRIR = function(buffer){
 }
 
 if (sampleRate == 44100) var audioURL = "/44folder/";
-//ARREGLAR ESTOOOOOOOOOO!!!!!
-					else if (sampleRate == 48000) var audioURL = "/48folder/";
+else if (sampleRate == 48000) var audioURL = "/48folder/";
 
 loadSound(audioURL.concat("thecatalyst.wav"), saveSong);
 loadSound(audioURL.concat("sadie/E35_A135.wav"), saveHRTF);
@@ -175,6 +174,9 @@ setTimeout(function(){
   //Creating splitters
   var splitter = audioContext.createChannelSplitter(8);
   splitter.channelInterpretation = 'discrete';
+  
+  var splitterRIR = audioContext.createChannelSplitter(4);
+  splitterRIR.channelInterpretation = 'discrete';
 
   //Creating gainVolumes
   var gainVolume = audioContext.createGain();
@@ -236,12 +238,65 @@ setTimeout(function(){
 
   //CHANGE reverb
   document.getElementById('room_main').addEventListener('change',function(){
+    var len = convolverRIR.buffer.length;
+    var a1 = new Float32Array(len).fill(0);
+
+    var resetBuffer = audioContext.createBuffer(4, len, sampleRate);
+    for (var chres = 0; chres<4; chres++){
+      resetBuffer.copyToChannel(a1, chres);
+    }
+    convolverRIR.buffer = resetBuffer;
     var roo = (document.getElementById('room_main'));
     var newstr = roo.value.toString();
     loadSound(audioURL.concat(newstr), saveRIR);
-    //var convolverRIR = audioContext.createConvolver();
-    //convolverRIR.normalize = false;
-    //convolverRIR.channelInterpretation = 'discrete';
+    setTimeout(function(){
+      convolverRIR.buffer = rir;
+    },200);
+  })
+   document.getElementById('room_old').addEventListener('change',function(){
+    var len = convolverRIR.buffer.length;
+    var a1 = new Float32Array(len).fill(0);
+
+    var resetBuffer = audioContext.createBuffer(4, len, sampleRate);
+    for (var chres = 0; chres<4; chres++){
+      resetBuffer.copyToChannel(a1, chres);
+    }
+    convolverRIR.buffer = resetBuffer;
+    var roo = (document.getElementById('room_old'));
+    var newstr = roo.value.toString();
+    loadSound(audioURL.concat(newstr), saveRIR);
+    setTimeout(function(){
+      convolverRIR.buffer = rir;
+    },200);
+  })
+  document.getElementById('room_adbooth').addEventListener('change',function(){
+   var len = convolverRIR.buffer.length;
+    var a1 = new Float32Array(len).fill(0);
+
+    var resetBuffer = audioContext.createBuffer(4, len, sampleRate);
+    for (var chres = 0; chres<4; chres++){
+      resetBuffer.copyToChannel(a1, chres);
+    }
+    convolverRIR.buffer = resetBuffer;
+    var roo = (document.getElementById('room_adbooth'));
+    var newstr = roo.value.toString();
+    loadSound(audioURL.concat(newstr), saveRIR);
+    setTimeout(function(){
+      convolverRIR.buffer = rir;
+    },200);
+  })
+  document.getElementById('room_vis').addEventListener('change',function(){
+    var len = convolverRIR.buffer.length;
+    var a1 = new Float32Array(len).fill(0);
+
+    var resetBuffer = audioContext.createBuffer(4, len, sampleRate);
+    for (var chres = 0; chres<4; chres++){
+      resetBuffer.copyToChannel(a1, chres);
+    }
+    convolverRIR.buffer = resetBuffer;
+    var roo = (document.getElementById('room_vis'));
+    var newstr = roo.value.toString();
+    loadSound(audioURL.concat(newstr), saveRIR);
     setTimeout(function(){
       convolverRIR.buffer = rir;
     },200);
@@ -256,10 +311,6 @@ setTimeout(function(){
       songSource.buffer = audioData;
       songSource.channelInterpretation = 'discrete';
       var dur = (songSource.buffer.duration)*1000;
-
-
-      var splitterRIR = audioContext.createChannelSplitter(4);
-      splitterRIR.channelInterpretation = 'discrete';
 
       songSource.connect(convolverRIR);
       convolverRIR.connect(splitterRIR);
