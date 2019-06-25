@@ -17,3 +17,23 @@ body {
   width: 90px;
   color: black;
 }
+p.text{
+  font-family:Arial,Helvetica,sans-serif;
+  font-size: 10px;
+}
+#player{
+  margin-left: auto;
+  margin-right: auto;
+  width: 200px;
+  height: 80px;
+  border-radius: 25px;
+  background-color:rgb(123, 187, 255);
+}
+#audio3d{
+  margin-left:auto;
+  margin-right:auto;
+  width:450px;
+  height: 175px;
+  border-radius:25px;
+  background-color:rgb(123, 187, 255);
+}

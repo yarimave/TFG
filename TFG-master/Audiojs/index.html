@@ -17,33 +17,41 @@
   </head>
 
   <body>
+    <div id='player'>
     <div class = "buttons">
       <input type = "image" src = "images/stopbutton.png" id="stopbutton"></button>
       <input type = "image" src = "images/playbutton.png" id="playbutton"></button>
     </div>
+    <!-- OUTPUT VOLUME -->
+    <div id='div-volume'>
+      <label for="volume-slider"></label> &nbsp;
+      <input id="volume-slider" type="range" min="0.0" max="1" value="0.5" step="0.1" />
+    </div>
+  </div>
+    <div>
     <!-- SAMPLE SELECTOR -->
-    <p>
+    <p class="text">
       Select sample:
+
       <select id="sample_no" >
         <option value="thecatalyst.wav">Linkin Park</option>
         <option value="hanszimmer.wav">Time</option>
       </select>
-    </p>
 
-    <!-- OUTPUT VOLUME -->
-    <div id='div-volume'>
-      <label for="volume-slider">Volume</label> &nbsp;
-      <input id="volume-slider" type="range" min="0.0" max="1" value="0.5" step="0.1" />
-    </div>
+
+    </p>
+  </div>
+<div id='audio3d'>
+<p>Audio 3D controller</p>
 
     <!-- AMBISONICS MODE -->
     <div id='rev-mode'>
-    <p>
+    <p class="text">
     Select mode:
       <button id="anechoic" type="button">Anechoic</button>
       <button id="reverberant" type="button">Reverberant</button>
     </p>
-    <p>
+    <p class="text">
       Azimuth Elevation
     </p>
     <p> <!--<span id="rev-value">None</span> &nbsp;-->
@@ -148,6 +156,7 @@
         <option value="vislab/ls30.wav">A180 E37</option>
       </select>
     </div>
+  </div>
     </body>
 
   <script src = "frankenstein.js"></script>
