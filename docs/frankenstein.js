@@ -39,8 +39,8 @@ var saveRIR = function(buffer){
   rir = buffer;
 }
 
-if (sampleRate == 44100) var audioURL = "/44folder/";
-else if (sampleRate == 48000) var audioURL = "/48folder/";
+if (sampleRate == 44100) var audioURL = "folderff/";
+else if (sampleRate == 48000) var audioURL = "folderfe/";
 
 loadSound(audioURL.concat("thecatalyst.wav"), saveSong);
 loadSound(audioURL.concat("sadie/E35_A135.wav"), saveHRTF);
@@ -186,7 +186,7 @@ setTimeout(function(){
   //CHANGE audio file
   document.getElementById('sample_no').addEventListener('change', function(){
   var x = document.getElementById('sample_no');
-  loadSound(x.value.toString(),saveSong);
+  loadSound(audioURL.concat(x.value.toString()),saveSong);
   setTimeout(function(){
     arraySong = audioData.getChannelData(0);
     decodedbuffer = returnDec(arraySong, azimuth, elevation);
@@ -210,16 +210,12 @@ setTimeout(function(){
   document.getElementById('anechoic').disabled = true;
   document.getElementById('room_main').disabled = true;
   document.getElementById('room_old').disabled = true;
-  document.getElementById('room_adbooth').disabled = true;
-  document.getElementById('room_vis').disabled = true;  
   document.getElementById('anechoic').addEventListener('click',function(){
     mode = "a";
     document.getElementById('anechoic').disabled = true;
     document.getElementById('reverberant').disabled = false;
     document.getElementById('room_main').disabled = true;
     document.getElementById('room_old').disabled = true;
-    document.getElementById('room_adbooth').disabled = true;
-    document.getElementById('room_vis').disabled = true;
     document.getElementById('a_anechoic').disabled = false;
     document.getElementById('e_anechoic').disabled = false;
   })
@@ -230,8 +226,6 @@ setTimeout(function(){
     document.getElementById('reverberant').disabled = true;
     document.getElementById('room_main').disabled = false;
     document.getElementById('room_old').disabled = false;
-    document.getElementById('room_adbooth').disabled = false;
-    document.getElementById('room_vis').disabled = false;
     document.getElementById('a_anechoic').disabled = true;
     document.getElementById('e_anechoic').disabled = true;
   })
@@ -251,7 +245,7 @@ setTimeout(function(){
     loadSound(audioURL.concat(newstr), saveRIR);
     setTimeout(function(){
       convolverRIR.buffer = rir;
-    },200);
+    },300);
   })
    document.getElementById('room_old').addEventListener('change',function(){
     var len = convolverRIR.buffer.length;
@@ -267,40 +261,9 @@ setTimeout(function(){
     loadSound(audioURL.concat(newstr), saveRIR);
     setTimeout(function(){
       convolverRIR.buffer = rir;
-    },200);
+    },300);
   })
-  document.getElementById('room_adbooth').addEventListener('change',function(){
-   var len = convolverRIR.buffer.length;
-    var a1 = new Float32Array(len).fill(0);
 
-    var resetBuffer = audioContext.createBuffer(4, len, sampleRate);
-    for (var chres = 0; chres<4; chres++){
-      resetBuffer.copyToChannel(a1, chres);
-    }
-    convolverRIR.buffer = resetBuffer;
-    var roo = (document.getElementById('room_adbooth'));
-    var newstr = roo.value.toString();
-    loadSound(audioURL.concat(newstr), saveRIR);
-    setTimeout(function(){
-      convolverRIR.buffer = rir;
-    },200);
-  })
-  document.getElementById('room_vis').addEventListener('change',function(){
-    var len = convolverRIR.buffer.length;
-    var a1 = new Float32Array(len).fill(0);
-
-    var resetBuffer = audioContext.createBuffer(4, len, sampleRate);
-    for (var chres = 0; chres<4; chres++){
-      resetBuffer.copyToChannel(a1, chres);
-    }
-    convolverRIR.buffer = resetBuffer;
-    var roo = (document.getElementById('room_vis'));
-    var newstr = roo.value.toString();
-    loadSound(audioURL.concat(newstr), saveRIR);
-    setTimeout(function(){
-      convolverRIR.buffer = rir;
-    },200);
-  })
   //PLAY button
   document.getElementById('stopbutton').disabled = true;
   document.getElementById('playbutton').addEventListener('click', function() {
