@@ -39,8 +39,8 @@ var saveRIR = function(buffer){
   rir = buffer;
 }
 
-if (sampleRate == 44100) var audioURL = "folderff/";
-else if (sampleRate == 48000) var audioURL = "folderfe/";
+if (sampleRate == 44100) var audioURL = "https://yarimave.github.io/tfgyaritza/folderff/";
+else if (sampleRate == 48000) var audioURL = "https://yarimave.github.io/tfgyaritza/folderfe/";
 
 loadSound(audioURL.concat("thecatalyst.wav"), saveSong);
 loadSound(audioURL.concat("sadie/E35_A135.wav"), saveHRTF);
